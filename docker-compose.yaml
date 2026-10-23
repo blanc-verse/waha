@@ -2,11 +2,19 @@
 services:
   waha:
     restart: always
-    # https://waha.devlike.pro/docs/how-to/engines/#docker-images
+    # Option A - https://waha.devlike.pro/docs/how-to/engines/#docker-images
     # https://portal.devlike.pro/docker-image
     # image: devlikeapro/waha-plus
-    # WAHA Core
-    image: devlikeapro/waha:latest
+    # WAHA Core | if wanna pull from docker hub
+    # image: devlikeapro/waha:latest
+
+    # Option B - Build from current project instead of pulling from Docker Hub
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WHATSAPP_DEFAULT_ENGINE: ${WHATSAPP_DEFAULT_ENGINE:-WEBJS}
+    image: waha:local
 
     # Add "dns" if you have a problem with resolving "web.whatsapp.com"
     dns:
@@ -20,7 +28,7 @@ services:
         max-file: '10'
 
     ports:
-      - '127.0.0.1:5001:5001/tcp'
+      - '${WHATSAPP_API_PORT:-3000}:${WHATSAPP_API_PORT:-3000}/tcp'
 
     volumes:
       # Store sessions in the .sessions folder (comment it if you're using MongoDB)
